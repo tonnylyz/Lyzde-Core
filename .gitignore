@@ -1,0 +1,7 @@
+﻿.vs/*
+.idea/*
+obj/*
+bin/*
+Properties/*
+config.json
+lyzde.csproj.user
