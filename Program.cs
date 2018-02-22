@@ -7,7 +7,7 @@ namespace Lyzde
     {
         public static void Main(string[] args)
         {
-            Config.Current = new Config();
+            var config = new Config();
             BuildWebHost(args).Run();
         }
 

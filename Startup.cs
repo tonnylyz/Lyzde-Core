@@ -11,11 +11,11 @@ namespace Lyzde
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            var connStr = $"Host={Config.Current.DatabaseHost};" +
-                          $"Port={Config.Current.DatabasePort};" +
-                          $"Username={Config.Current.DatabaseUser};" +
-                          $"Password={Config.Current.AdminPassword};" +
-                          $"Database={Config.Current.DatabaseDatabase}";
+            var connStr = $"Host={Config.Current.Database.Host};" +
+                          $"Port={Config.Current.Database.Port};" +
+                          $"Username={Config.Current.Database.User};" +
+                          $"Password={Config.Current.Admin.Password};" +
+                          $"Database={Config.Current.Database.Database}";
 
             services.AddEntityFrameworkNpgsql().AddDbContext<LyzdeContext>(options => options.UseNpgsql(connStr));
             services.AddDistributedMemoryCache();

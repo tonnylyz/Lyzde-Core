@@ -27,7 +27,7 @@ namespace Lyzde.Controllers
             if (username.Length > 20 || password.Length > 20)
                 return BadRequest();
             Visit v;
-            if (username == Config.Current.AdminUsername && password == Config.Current.AdminPassword)
+            if (username == Config.Current.Admin.Username && password == Config.Current.Admin.Password)
             {
                 HttpContext.Session.SetString("UUID", Guid.NewGuid().ToString());
                 v = Utility.Log(Request, "Login Ok");

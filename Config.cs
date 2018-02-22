@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Lyzde
 {
@@ -7,53 +8,46 @@ namespace Lyzde
     {
         public Config(string jsonPath = "config.json")
         {
-            var jsonString = File.ReadAllText(jsonPath);
-            var root = JObject.Parse(jsonString);
-            foreach (var token in (JObject)root["admin"])
+            if (!File.Exists(jsonPath))
             {
-                if (token.Key == "username")
-                {
-                    AdminUsername = token.Value.ToString();
-                }
-                else if (token.Key == "password")
-                {
-                    AdminPassword = token.Value.ToString();
-                }
+                Console.WriteLine($"Config file `{jsonPath}` not found.");
+                Environment.Exit(-1);
             }
-
-            foreach (var token in (JObject)root["database"])
+            try
             {
-                switch (token.Key)
-                {
-                    case "host":
-                        DatabaseHost = token.Value.ToString();
-                        break;
-                    case "port":
-                        DatabasePort = token.Value.ToObject<ushort>();
-                        break;
-                    case "user":
-                        DatabaseUser = token.Value.ToString();
-                        break;
-                    case "password":
-                        DatabasePassword = token.Value.ToString();
-                        break;
-                    case "database":
-                        DatabaseDatabase = token.Value.ToString();
-                        break;
-                }
+                var jsonString = File.ReadAllText(jsonPath);
+                Current = JsonConvert.DeserializeObject<Configuration>(jsonString);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to parse config file.");
+                Environment.Exit(-1);
             }
         }
 
-        public static Config Current { get; set; }
+        [Serializable]
+        public struct Configuration
+        {
+            public struct Administrator
+            {
+                public string Username { get; }
+                public string Password { get; }
+            }
 
-        public string AdminUsername { get; private set; }
-        public string AdminPassword { get; private set; }
+            public struct DatabaseConnection
+            {
+                public string Host { get; }
+                public short Port { get; }
+                public string User { get; }
+                public string Password { get; }
+                public string Database { get; }
+            }
 
-        public string DatabaseHost { get; private set; }
-        public ushort DatabasePort { get; private set; }
-        public string DatabaseUser { get; private set; }
-        public string DatabasePassword { get; private set; }
-        public string DatabaseDatabase { get; private set; }
+            public Administrator Admin { get; }
 
+            public DatabaseConnection Database { get; }
+        }
+
+        public static Configuration Current { get; private set; }
     }
 }
