@@ -14,7 +14,7 @@ namespace Lyzde
             var connStr = $"Host={Config.Current.Database.Host};" +
                           $"Port={Config.Current.Database.Port};" +
                           $"Username={Config.Current.Database.User};" +
-                          $"Password={Config.Current.Admin.Password};" +
+                          $"Password={Config.Current.Database.Password};" +
                           $"Database={Config.Current.Database.Database}";
 
             services.AddEntityFrameworkNpgsql().AddDbContext<LyzdeContext>(options => options.UseNpgsql(connStr));
