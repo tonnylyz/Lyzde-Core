@@ -23,31 +23,6 @@ namespace Lyzde.Controllers
             return Json(list);
         }
 
-        [HttpGet]
-        public JsonResult Content(int id)
-        {
-            var blog = id == 0 ? 
-                _db.Articles.OrderByDescending(a => a.Id).Take(1).Single() : 
-                _db.Articles.Find(id);
-            
-            blog.ViewCount = blog.ViewCount + 1;
-            _db.SaveChanges();
-
-            var comments = _db.Entry(blog)
-                .Collection(a => a.Comments)
-                .Query()
-                .Where(c => c.Status == (int)Models.Comment.StatusType.Verified)
-                .ToList();
-            foreach (var comment in comments)
-            {
-                comment.Article = null;
-            }
-            blog.Comments = comments;
-
-            return Json(blog);
-        }
-        
-
         [HttpPost]
         public IActionResult Comment(int id, string email, string name, string subject, string content)
         {
