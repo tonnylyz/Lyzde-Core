@@ -32,7 +32,7 @@ $(function () {
 
     $.get("/Ajax/Blog/List",
         function (list) {
-            var template = '<a class="list-group-item list-group-item-action" href="post/{id}.html">{title}</a>';
+            var template = '<a class="list-group-item list-group-item-action" href="/post/{id}.html">{title}</a>';
             $("#blog-list").empty();
             for (var i = 0; i < list.length; i++) {
                 $("#blog-list").append(template
