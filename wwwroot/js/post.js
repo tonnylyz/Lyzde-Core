@@ -30,7 +30,7 @@ $(function () {
     var converter = new showdown.Converter();
     $("#blog-content").html(converter.makeHtml($("#blog-content-md").html()));
 
-    $.get("Ajax/Blog/List",
+    $.get("/Ajax/Blog/List",
         function (list) {
             var template = '<a class="list-group-item list-group-item-action" href="post/{id}.html">{title}</a>';
             $("#blog-list").empty();
@@ -45,7 +45,7 @@ $(function () {
 $("#comment-form").submit(function (e) {
     e.preventDefault();
     $.ajax({
-        url: "Ajax/Blog/Comment/" + blogId,
+        url: "/Ajax/Blog/Comment/" + blogId,
         method: "post",
         data: $("#comment-form").serializeArray(),
         success: function () {

@@ -9,7 +9,7 @@
 $("#login-form").submit(function (e) {
     e.preventDefault();
     $.ajax({
-        url: "Ajax/Admin/Login",
+        url: "/Ajax/Admin/Login",
         method: "post",
         data: $("#login-form").serializeArray(),
         success: function () {

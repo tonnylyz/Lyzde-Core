@@ -1,6 +1,6 @@
 ﻿$(function () {
     feather.replace();
-    $.get("Ajax/Admin/VisitData",
+    $.get("/Ajax/Admin/VisitData",
         function (result) {
             var count = result.count;
             var vlabels = [];
@@ -93,7 +93,7 @@
 });
 
 function log_out() {
-    $.get("Ajax/Admin/Logout", function() {
+    $.get("/Ajax/Admin/Logout", function() {
         window.location.href = "login.html";
     });
 }
