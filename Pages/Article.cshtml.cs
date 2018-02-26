@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Lyzde.Models;
@@ -6,11 +7,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Lyzde.Pages
 {
-    public class Post : PageModel
+    public class ArticlePage : PageModel
     {
         private readonly LyzdeContext _db;
 
-        public Post(LyzdeContext db)
+        public ArticlePage(LyzdeContext db)
         {
             _db = db;
         }
@@ -29,6 +30,11 @@ namespace Lyzde.Pages
             }
 
             Current.ViewCount++;
+            #if DEBUG
+            
+            #else
+            _db.SaveChanges();
+            #endif
             
             var comments = _db.Entry(Current)
                 .Collection(a => a.Comments)
@@ -42,7 +48,6 @@ namespace Lyzde.Pages
             }
 
             Current.Comments = comments;
-            _db.SaveChangesAsync();
         }
     }
 }

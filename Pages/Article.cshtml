@@ -1,6 +1,6 @@
 ﻿@page
 @using System.Globalization
-@model Lyzde.Pages.Post
+@model Lyzde.Pages.ArticlePage
 <!doctype html>
 <html>
 <head>
@@ -14,18 +14,24 @@
     <link href="https://unpkg.com/pnotify@3.2.1/dist/pnotify.brighttheme.css" rel="stylesheet">
     <style>
         body { padding-top: 3.5rem; }
+        #blog-list { opacity: 0; transition: opacity 0.2s ease-in-out; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="index.html">LYZDE</a>
-    <div id="main-navbar">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="me.html">Me</a>
-            </li>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark justify-content-between">
+    <a class="navbar-brand" href="/index.html">LYZDE</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="main-navbar" class="collapse navbar-collapse">
+        <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" href="blog.html">Blog</a>
+                <a class="nav-link" href="/blog.html">Blog</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/login.html">Admin Panel</a>
             </li>
         </ul>
     </div>
@@ -107,7 +113,9 @@
                 </form>
             </div>
             <div class="col-md-4">
-                <dl class="row">
+                
+                <a href="/blog.html" class="btn btn-info btn-block">Article List</a>
+                <dl class="row mt-3">
                     <dt class="col-sm-3">Datetime</dt>
                     <dd id="blog-datetime" class="col-sm-9"><abbr class="human-time" title="@Model.Current.Datetime.ToString(CultureInfo.CurrentCulture)"></abbr></dd>
                     <dt class="col-sm-3">View</dt>
@@ -115,7 +123,7 @@
                     <dt class="col-sm-3">Comment</dt>
                     <dd id="blog-comment" class="col-sm-9">@Model.Current.Comments.Count</dd>
                 </dl>
-                <h5>Other articles</h5>
+                <button type="button" class="btn btn-secondary btn-block" disabled="disabled">Other articles</button>
                 <ul id="blog-list" class="list-group list-group-flush"></ul>
 
             </div>

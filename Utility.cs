@@ -23,7 +23,6 @@ namespace Lyzde
 
         public static Visit Log(HttpRequest request, string operation)
         {
-
             var userAgent = request.Headers["User-Agent"].ToString();
             var ip = request.HttpContext.Connection.RemoteIpAddress;
             var url = "N/A";

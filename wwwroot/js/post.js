@@ -24,11 +24,11 @@ function info(title, msg) {
 
 $(function () {
     $(".human-time").each(function () {
-        $(this).html(moment($(this).attr("title")).fromNow())
+        $(this).html(moment($(this).attr("title")).fromNow());
     });
     
     var converter = new showdown.Converter();
-    $("#blog-content").html(converter.makeHtml($("#blog-content-md").html()));
+    $("#blog-content").html(converter.makeHtml($("#blog-content-md").html().trim()));
 
     $.get("/Ajax/Blog/List",
         function (list) {
@@ -39,6 +39,7 @@ $(function () {
                     .replace("{id}", list[i].id)
                     .replace("{title}", list[i].title));
             }
+            $("#blog-list").css("opacity", 1);
         });
 });
 

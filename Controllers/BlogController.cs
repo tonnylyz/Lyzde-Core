@@ -23,6 +23,16 @@ namespace Lyzde.Controllers
             return Json(list);
         }
 
+        
+        [HttpGet]
+        public JsonResult ListDetail()
+        {
+            var list = _db.Articles
+                .Select(a => new {a.Id, a.Title, a.Description, a.Datetime, a.ViewCount, a.Tag})
+                .OrderByDescending(a => a.Id);
+            return Json(list);
+        }
+        
         [HttpPost]
         public IActionResult Comment(int id, string email, string name, string subject, string content)
         {
