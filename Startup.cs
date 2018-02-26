@@ -1,4 +1,5 @@
-﻿using Lyzde.Models;
+﻿using System;
+using Lyzde.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -16,7 +17,7 @@ namespace Lyzde
                           $"Username={Config.Current.Database.User};" +
                           $"Password={Config.Current.Database.Password};" +
                           $"Database={Config.Current.Database.Database}";
-
+            
             services.AddEntityFrameworkNpgsql().AddDbContext<LyzdeContext>(options => options.UseNpgsql(connStr));
             services.AddDistributedMemoryCache();
             services.AddSession();
@@ -30,7 +31,11 @@ namespace Lyzde
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
             app.UseAuthentication();
+#if DEBUG
+            app.UseDeveloperExceptionPage();
+#else
             app.UseStatusCodePages();
+#endif
             app.UseStaticFiles();
             app.UseSession();
             app.UseMvc(routes =>

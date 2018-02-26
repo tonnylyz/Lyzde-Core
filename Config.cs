@@ -6,7 +6,7 @@ namespace Lyzde
 {
     public class Config
     {
-        public Config(string jsonPath = "config.json")
+        public static void LoadConfig(string jsonPath = "config.json")
         {
             if (!File.Exists(jsonPath))
             {
@@ -30,22 +30,22 @@ namespace Lyzde
         {
             public struct Administrator
             {
-                public string Username { get; }
-                public string Password { get; }
+                public string Username { get; set; }
+                public string Password { get; set; }
             }
 
             public struct DatabaseConnection
             {
-                public string Host { get; }
-                public short Port { get; }
-                public string User { get; }
-                public string Password { get; }
-                public string Database { get; }
+                public string Host { get; set; }
+                public short Port { get; set; }
+                public string User { get; set; }
+                public string Password { get; set; }
+                public string Database { get; set; }
             }
 
-            public Administrator Admin { get; }
+            public Administrator Admin { get; set; }
 
-            public DatabaseConnection Database { get; }
+            public DatabaseConnection Database { get; set; }
         }
 
         public static Configuration Current { get; private set; }
