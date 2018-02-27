@@ -1,4 +1,4 @@
-﻿function info(title, msg) {
+﻿function success(title, msg) {
     new PNotify({
         title: title,
         text: msg,
