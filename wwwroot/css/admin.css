@@ -95,3 +95,15 @@
 .border-bottom {
     border-bottom: 1px solid #e5e5e5;
 }
+
+
+.full-height {
+    max-height: calc(100vh - 70px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#article-editor {
+    height: calc(100vh - 230px);
+    resize: none;
+}

@@ -86,6 +86,63 @@ namespace Lyzde.Controllers
             return new ObjectResult(result);
         }
 
+        [HttpGet]
+        public IActionResult ArticleContent(int id)
+        {
+            if (HttpContext.Session.Get("UUID") == null)
+                return NoContent();
+
+            var article = _db.Articles.Find(id);
+            if (article == null) return NoContent();
+
+            return Json(article);
+        }
+
+        [HttpPost]
+        public IActionResult ArticleSubmit(int id, string content, string datetime, string description, string tag, string title, int viewCount)
+        {
+            if (HttpContext.Session.Get("UUID") == null)
+                return NoContent();
+            if (!DateTime.TryParse(datetime, out var dt)) return BadRequest();
+
+            if (id == -1)
+            {
+                var article = new Article
+                {
+                    Title = title,
+                    Datetime = dt,
+                    ViewCount = viewCount,
+                    Tag = tag,
+                    Description = description,
+                    Content = content
+                };
+                _db.Articles.Add(article);
+            }
+            else
+            {
+                var article = _db.Articles.Find(id);
+                if (article == null) return BadRequest();
+
+                article.Title = title;
+                article.Datetime = dt;
+                article.ViewCount = 0;
+                article.Tag = tag;
+                article.Description = description;
+                article.Content = content;
+            }
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Json(ex.Message);
+            }
+            return Ok();
+        }
+        
+        
         [HttpPost]
         public IActionResult UploadAsset(List<IFormFile> files)
         {
