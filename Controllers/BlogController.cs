@@ -1,4 +1,5 @@
-﻿using Lyzde.Models;
+﻿using System;
+using Lyzde.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -37,13 +38,13 @@ namespace Lyzde.Controllers
         public IActionResult Comment(int id, string email, string name, string subject, string content)
         {
             if (email == null || !Regex.IsMatch(email, "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*"))
-                return BadRequest();
+                return BadRequest("Bad email format.");
             if (name == null || name.Length > 50)
-                return BadRequest();
+                return BadRequest("Name too long.");
             if (subject == null || subject.Length > 50)
-                return BadRequest();
+                return BadRequest("Subject too long.");
             if (content == null || content.Length > 255)
-                return BadRequest();
+                return BadRequest("Content too long.");
             
             name = Utility.Sanitize(name);
             subject = Utility.Sanitize(subject);
@@ -63,9 +64,9 @@ namespace Lyzde.Controllers
                 _db.SaveChanges();
                 return Ok();
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
         

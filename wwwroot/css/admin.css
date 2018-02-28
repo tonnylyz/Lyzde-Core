@@ -107,3 +107,12 @@
     height: calc(100vh - 230px);
     resize: none;
 }
+
+#admin-article-list a > span.badge-danger {
+    display: none;
+    float: right;
+}
+
+#admin-article-list a.list-group-item-info > span.badge-danger {
+    display: inline;
+}

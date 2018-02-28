@@ -50,11 +50,11 @@ $("#comment-form").submit(function (e) {
         method: "post",
         data: $("#comment-form").serializeArray(),
         success: function () {
-            success("Submit success", "Your comment will be checked and shown.");
+            success("Submit succeeded", "Your comment will be checked and shown.");
             $("#comment-form")[0].reset();
         },
-        error: function () {
-            error("Submit error", "Comment submit error. Please try later.");
+        error: function (rsp) {
+            error("Submit failed", "Please check your inputs, more info: " + rsp.responseText);
         }
     });
 });

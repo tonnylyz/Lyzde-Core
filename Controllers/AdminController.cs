@@ -103,7 +103,7 @@ namespace Lyzde.Controllers
         {
             if (HttpContext.Session.Get("UUID") == null)
                 return NoContent();
-            if (!DateTime.TryParse(datetime, out var dt)) return BadRequest();
+            if (!DateTime.TryParse(datetime, out var dt)) return BadRequest("Bad datetime format.");
 
             if (id == -1)
             {
@@ -136,12 +136,30 @@ namespace Lyzde.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return Json(ex.Message);
+                return BadRequest(ex.Message);
             }
             return Ok();
         }
-        
+
+
+        [HttpGet]
+        public IActionResult ArticleDelete(int id)
+        {
+            if (HttpContext.Session.Get("UUID") == null)
+                return NoContent();
+            var article = _db.Articles.Find(id);
+            if (article == null) return BadRequest();
+            try
+            {
+                _db.Articles.Remove(article);
+                _db.SaveChanges();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         
         [HttpPost]
         public IActionResult UploadAsset(List<IFormFile> files)

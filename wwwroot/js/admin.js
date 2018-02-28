@@ -91,6 +91,13 @@
 
         });
 
+    window.onbeforeunload = function () { 
+        if (article_editor_changed) {
+            return "Are you sure to leave this page with unsaved content?";
+        }
+        return null;
+    };
+    
     article_list_load();    
 });
 
@@ -100,7 +107,78 @@ function log_out() {
     });
 }
 
-$("#article-form").submit(function (e) {
+var admin_sections = {
+    dashboard : "dashboard",
+    visit: "visit",
+    article: "article"
+};
+
+Object.freeze(admin_sections);
+
+var admin_current_section = admin_sections.dashboard;
+
+$("#admin-menu").children().each(function () {
+    $(this).find("a").click(function (e) {
+        e.preventDefault();
+        var section = $(this).data("section");
+        if (section === admin_current_section) {
+            return;
+        }
+        $("#admin-menu").find(".active").removeClass("active");
+        $(this).addClass("active");
+        
+        admin_current_section = section;
+        $("section").each(function () {
+            if ($(this).data("section") === section && section === admin_sections.article) {
+                $(this).css("display", "flex");
+            } else if ($(this).data("section") === section) {
+                $(this).css("display", "block");
+            } else {
+                $(this).css("display", "none");
+            }
+        });
+    })
+});
+
+
+
+
+
+function article_list_load() {
+    $.get("/Ajax/Blog/List",
+        function (list) {
+            var template = '<a class="list-group-item list-group-item-action px-1" href="#" data-id="{id}" onclick="article_content_load(this); return false;">{title} <span onclick="article_delete(this)" class="badge badge-danger">&times;</span></a>';
+            var al = $("#admin-article-list");
+            al.empty();
+            al.css("opacity", 0);
+            for (var i = 0; i < list.length; i++) {
+                al.append(template
+                    .replace("{id}", list[i].id)
+                    .replace("{title}", list[i].title));
+            }
+            al.css("opacity", 1);
+        });
+}
+
+function article_delete(o) {
+    confirm("Delete this article?", "This operation can NOT be reverted, be careful!",
+    function () {
+        $.get("/Ajax/Admin/ArticleDelete/" + $(o).parent().data("id"), function () {
+            success("Delete succeeded", "The article has been deleted.");
+            article_list_load();
+            article_editor_changed = false;
+            article_current_edit = null;
+            article_editor_discard(function () {}, function () {});
+        }).fail(function(rsp) {
+            error("Delete failed", "Unable to delete this article, more info: " + rsp.responseText);
+        });
+    }, function() {
+        
+    });
+}
+
+var article_form = $("#article-form");
+article_form.submit(function (e) {
     e.preventDefault();
     $.ajax({
         url: "/Ajax/Admin/ArticleSubmit",
@@ -123,34 +201,25 @@ const article_status_edit = 1;
 const article_status_new = 2;
 var article_status = article_status_default;
 
-function article_list_load() {
-    $.get("/Ajax/Blog/List",
-        function (list) {
-            var template = '<a class="list-group-item list-group-item-action" href="#" data-id="{id}" onclick="article_content_load(this); return false;">{title}</a>';
-            var al = $("#admin-article-list");
-            al.empty();
-            al.css("opacity", 0);
-            for (var i = 0; i < list.length; i++) {
-                al.append(template
-                    .replace("{id}", list[i].id)
-                    .replace("{title}", list[i].title));
-            }
-            al.css("opacity", 1);
-        });
-}
+var article_editor_changed = false;
+article_form.find(":input").change(function() {
+    article_editor_changed = true;
+});
 
-function article_content_load(o) {
-    if (article_status !== article_status_default) {
-        error("Save current work?", "Your need to discard or submit your current work to edit another.");
+
+var article_current_edit;
+
+function article_edit(o) {
+    if (article_current_edit !== o) {
+        article_current_edit = o;
+    } else {
         return;
     }
-    article_status = article_status_edit;
-
     var amb = $("#article-main-button");
     amb.html("Discard");
     amb.removeClass("btn-info");
     amb.addClass("btn-danger");
-    
+
     var id = $(o).data("id");
     $(o).parent().children().removeClass("list-group-item-info");
     $(o).addClass("list-group-item-info");
@@ -164,8 +233,20 @@ function article_content_load(o) {
         form.find("textarea[name='content']").val(article.content);
         form.find("input[name='tag']").val(article.tag);
         article_live_preview();
-    })
-    
+        article_editor_changed = false;
+    });
+}
+
+function article_content_load(o) {
+    if (article_current_edit === o) {
+        return;
+    }
+    article_editor_discard(function () {
+        article_status = article_status_edit;
+        article_edit(o);
+    }, function () {
+
+    });
 }
 
 function article_live_preview() {
@@ -178,9 +259,26 @@ function article_live_preview() {
     }
 }
 
+function article_editor_discard(ok, cancel) {
+    if (article_status === article_status_default || article_editor_changed === false) {
+        ok();
+        return;
+    }
+    confirm(
+        "Discard current work?",
+        "It seems that you have edit some inputs, are you sure to discard them?",
+        function (){
+            ok();
+            article_editor_changed = false;
+        }, function (){
+            cancel();
+        });
+}
+
 function article_amb() {
-    var amb = $("#article-main-button");
     var form = $("#article-form");
+    var amb = $("#article-main-button");
+    console.log(article_status);
     switch (article_status) {
         default:
         case article_status_default:
@@ -192,17 +290,36 @@ function article_amb() {
             form.find("input[name='datetime']").val(moment().format());
             article_live_preview();
             article_status = article_status_new;
+            article_editor_changed = false;
             break;
         case article_status_edit:
-            $("#admin-article-list").children().removeClass("list-group-item-info");
+            article_editor_discard(function () {
+                $("#admin-article-list").children().removeClass("list-group-item-info");
+
+                amb.html("New");
+                amb.removeClass("btn-danger");
+                amb.addClass("btn-info");
+                form[0].reset();
+                article_live_preview();
+                article_status = article_status_default;
+                article_current_edit = null;
+            }, function () {
+                
+            });
+            break;
         case article_status_new:
-            amb.html("New");
-            amb.removeClass("btn-danger");
-            amb.addClass("btn-info");
-            form[0].reset();
-            form.find("input[name='id']").val(-1);
-            article_live_preview();
-            article_status = article_status_default;
+            article_editor_discard(function () {
+
+                amb.html("New");
+                amb.removeClass("btn-danger");
+                amb.addClass("btn-info");
+                form[0].reset();
+                article_live_preview();
+                article_status = article_status_default;
+                
+            }, function () {
+                
+            });
             break;
     }
 }
@@ -228,5 +345,32 @@ function info(title, msg) {
         title: title,
         text: msg,
         type: 'info'
+    });
+}
+
+function confirm(title, msg, ok, cancel) {
+    (new PNotify({
+        title: title,
+        text: msg,
+        hide: false,
+        confirm: {
+            confirm: true
+        },
+        buttons: {
+            closer: false,
+            sticker: false
+        },
+        history: {
+            history: false
+        },
+        stack: {
+            'dir1': 'down',
+            'dir2': 'right',
+            'modal': true
+        }
+    })).get().on('pnotify.confirm', function() {
+        ok();
+    }).on('pnotify.cancel', function() {
+        cancel();
     });
 }
