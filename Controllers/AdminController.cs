@@ -111,7 +111,7 @@ namespace Lyzde.Controllers
                 {
                     Title = title,
                     Datetime = dt,
-                    ViewCount = viewCount,
+                    ViewCount = 0,
                     Tag = tag,
                     Description = description,
                     Content = content
@@ -125,7 +125,7 @@ namespace Lyzde.Controllers
 
                 article.Title = title;
                 article.Datetime = dt;
-                article.ViewCount = 0;
+                article.ViewCount = viewCount;
                 article.Tag = tag;
                 article.Description = description;
                 article.Content = content;
