@@ -185,6 +185,7 @@ article_form.submit(function (e) {
         method: "post",
         data: $("#article-form").serializeArray(),
         success: function () {
+            article_editor_changed = false;
             article_amb();
             article_list_load();
             success("Submit Succeeded", "Check it on the public site!")
