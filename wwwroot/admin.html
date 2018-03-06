@@ -42,12 +42,12 @@
                             Article
                         </a>
                     </li>
-                    <!--<li class="nav-item">
-                        <a class="nav-link" href="#">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="comment">
                             <span data-feather="message-square"></span>
                             Comment
                         </a>
-                    </li>-->
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -115,6 +115,23 @@
                 <div id="admin-article-preview" class="col-md-5 full-height">
                     <h1 class="text-muted text-center">Live Preview</h1>
                 </div>
+            </section>
+
+            <section data-section="comment" style="display: none;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Article</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Content</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Datetime</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="admin-comment-container"></tbody>
+                </table>
             </section>
             
         </main>

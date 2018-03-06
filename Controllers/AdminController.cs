@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lyzde.Controllers
 {
@@ -159,6 +160,50 @@ namespace Lyzde.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet]
+        public IActionResult CommentList()
+        {
+            if (HttpContext.Session.Get("UUID") == null)
+                return NoContent();
+            var comments = _db.Comments.Include(b => b.Article).Select(
+                c => new {
+                    c.Id,
+                    c.ArticleId,
+                    c.Article.Title,
+                    c.Author,
+                    c.Email,
+                    c.Status,
+                    c.Subject,
+                    c.Content,
+                    c.Datetime
+                }).ToList();
+            return Json(comments);
+        }
+
+        [HttpGet]
+        public IActionResult CommentApprove(int id)
+        {
+            if (HttpContext.Session.Get("UUID") == null)
+                return NoContent();
+            var comment = _db.Comments.Find(id);
+            if (comment == null) return BadRequest("Invalid comment id specified.");
+            comment.Status = (int) Comment.StatusType.Verified;
+            _db.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult CommentSpam(int id)
+        {
+            if (HttpContext.Session.Get("UUID") == null)
+                return NoContent();
+            var comment = _db.Comments.Find(id);
+            if (comment == null) return BadRequest("Invalid comment id specified.");
+            comment.Status = (int) Comment.StatusType.Spam;
+            _db.SaveChanges();
+            return Ok();
         }
         
         [HttpPost]

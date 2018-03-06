@@ -116,3 +116,12 @@
 #admin-article-list a.list-group-item-info > span.badge-danger {
     display: inline;
 }
+
+#admin-comment-container .btn-group {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#admin-comment-container tr:hover .btn-group {
+    opacity: 1;
+}

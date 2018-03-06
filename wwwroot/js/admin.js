@@ -98,7 +98,34 @@
         return null;
     };
     
-    article_list_load();    
+    article_list_load();
+    
+    $.get("/Ajax/Admin/CommentList", function (data) {
+        for (var i = 0; i < data.length; i++) {
+            var tr_class = "";
+            if (data[i].status === 0) {
+                tr_class = "table-success";
+            } else if (data[i].status === 2) {
+                tr_class = "table-dark";
+            }
+            $("#admin-comment-container").append('<tr class="' + tr_class + '" data-id="' + data[i].id + '">\n' +
+                '                        <th scope="row">' + data[i].id + '</th>\n' +
+                '                        <td>' + data[i].title + '</td>\n' +
+                '                        <td>' + data[i].subject + '</td>\n' +
+                '                        <td>' + data[i].content + '</td>\n' +
+                '                        <td>' + data[i].author + ' (' + data[i].email + ')</td>\n' +
+                '                        <td><abbr title="' +
+                                            moment(data[i].datetime).format('MMMM Do YYYY, h:mm:ss a') +
+                                            '">' +
+                                            moment(data[i].datetime).fromNow() +
+                                            '</abbr></td>\n' +
+                '                        <td class="py-0">' + '<div class="btn-group btn-group-sm mt-2" role="group" aria-label="Basic example">\n' +
+                                        '  <button type="button" class="btn btn-success" onclick="comment_approve(this)">Approve</button>\n' +
+                                        '  <button type="button" class="btn btn-danger" onclick="comment_spam(this)">Spam</button>\n' +
+                                        '</div>' +'</td>\n' +
+                '                    </tr>');
+        }        
+    });
 });
 
 function log_out() {
@@ -110,7 +137,8 @@ function log_out() {
 var admin_sections = {
     dashboard : "dashboard",
     visit: "visit",
-    article: "article"
+    article: "article",
+    comment: "comment"
 };
 
 Object.freeze(admin_sections);
@@ -323,6 +351,24 @@ function article_amb() {
             });
             break;
     }
+}
+
+function comment_approve(o) {
+    var tr = $(o).parent().parent().parent();
+    var comment_id = tr.data("id");
+    $.get("/Ajax/Admin/CommentApprove/" + comment_id, function () {
+        tr.removeClass("table-dark");
+        tr.addClass("table-success");
+    });
+}
+
+function comment_spam(o) {
+    var tr = $(o).parent().parent().parent();
+    var comment_id = tr.data("id");
+    $.get("/Ajax/Admin/CommentSpam/" + comment_id, function () {
+        tr.removeClass("table-success");
+        tr.addClass("table-dark");
+    });
 }
 
 function success(title, msg) {

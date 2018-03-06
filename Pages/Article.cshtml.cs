@@ -42,11 +42,6 @@ namespace Lyzde.Pages
                 .Where(c => c.Status == (int)Comment.StatusType.Verified)
                 .ToList();
             
-            foreach (var comment in comments)
-            {
-                comment.Article = null;
-            }
-
             Current.Comments = comments;
         }
     }
