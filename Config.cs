@@ -43,9 +43,16 @@ namespace Lyzde
                 public string Database { get; set; }
             }
 
+            public struct ProductionConfig
+            {
+                public string Front { get; set; }
+            }
+            
             public Administrator Admin { get; set; }
 
             public DatabaseConnection Database { get; set; }
+            
+            public ProductionConfig Production { get; set; }
         }
 
         public static Configuration Current { get; private set; }
