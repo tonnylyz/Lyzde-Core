@@ -1,8 +1,8 @@
 ﻿using System;
-using Lyzde.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Lyzde.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Lyzde.Controllers
 {
@@ -24,7 +24,7 @@ namespace Lyzde.Controllers
             return Json(list);
         }
 
-        
+
         [HttpGet]
         public JsonResult ListDetail()
         {
@@ -33,7 +33,7 @@ namespace Lyzde.Controllers
                 .OrderByDescending(a => a.Id);
             return Json(list);
         }
-        
+
         [HttpPost]
         public IActionResult Comment(int id, string email, string name, string subject, string content)
         {
@@ -45,7 +45,7 @@ namespace Lyzde.Controllers
                 return BadRequest("Subject too long.");
             if (content == null || content.Length > 255)
                 return BadRequest("Content too long.");
-            
+
             name = Utility.Sanitize(name);
             subject = Utility.Sanitize(subject);
             content = Utility.Sanitize(content);
@@ -69,6 +69,5 @@ namespace Lyzde.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
     }
 }

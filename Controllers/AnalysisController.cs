@@ -15,9 +15,9 @@ namespace Lyzde.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            #if DEBUG
+#if DEBUG
             return Ok();
-            #endif
+#endif
             var v = Utility.Log(Request, "Page View");
             _db.Visits.Add(v);
             _db.SaveChanges();

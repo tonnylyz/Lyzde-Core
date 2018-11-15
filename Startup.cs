@@ -1,12 +1,12 @@
-﻿using System;
-using System.Net;
+﻿using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Lyzde.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Lyzde
 {
@@ -19,21 +19,15 @@ namespace Lyzde
                           $"Username={Config.Current.Database.User};" +
                           $"Password={Config.Current.Database.Password};" +
                           $"Database={Config.Current.Database.Database}";
-            
+
             services.AddEntityFrameworkNpgsql().AddDbContext<LyzdeContext>(options => options.UseNpgsql(connStr));
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = 
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                options.KnownProxies.Add(IPAddress.Parse(Config.Current.Production.Front));
-            });
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

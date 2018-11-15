@@ -6,7 +6,6 @@ namespace Lyzde
 {
     public class Utility
     {
-
         public static string Sanitize(string html)
         {
             if (string.IsNullOrEmpty(html)) return html;
@@ -18,6 +17,7 @@ namespace Lyzde
                 var tag = tags[i];
                 html = html.Remove(tag.Index, tag.Length);
             }
+
             return html;
         }
 
@@ -41,6 +41,5 @@ namespace Lyzde
             };
             return visit;
         }
-
     }
 }

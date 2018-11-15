@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lyzde.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Lyzde.Pages
@@ -11,38 +11,37 @@ namespace Lyzde.Pages
     {
         private readonly LyzdeContext _db;
 
+        public IList<OtherArticlesItem> OtherArticles;
+
         public ArticlePage(LyzdeContext db)
         {
             _db = db;
         }
 
         public Article Current { get; private set; }
-        
-        public void OnGet(int? id)
-        {
-            if (id != null)
-            {
-                Current = _db.Articles.Find(id);
-            }
-            if (Current == null)
-            {   
-                Current = _db.Articles.OrderByDescending(a => a.Id).Take(1).Single();
-            }
 
-            Current.ViewCount++;
-            #if DEBUG
-            
-            #else
-            _db.SaveChanges();
-            #endif
-            
-            var comments = _db.Entry(Current)
-                .Collection(a => a.Comments)
-                .Query()
-                .Where(c => c.Status == (int)Comment.StatusType.Verified)
+        public IActionResult OnGet(int? id)
+        {
+            if (id != null) Current = _db.Articles.Find(id);
+
+            if (Current == null) return NotFound();
+
+            OtherArticles = _db.Articles
+                .OrderByDescending(a => a.Id)
+                .Take(5)
+                .Select(a => new OtherArticlesItem
+                {
+                    Id = a.Id, Title = a.Title
+                })
                 .ToList();
-            
-            Current.Comments = comments;
+
+            return Page();
+        }
+
+        public struct OtherArticlesItem
+        {
+            public int Id;
+            public string Title;
         }
     }
 }

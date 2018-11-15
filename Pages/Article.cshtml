@@ -1,5 +1,6 @@
 ﻿@page
-@using System.Globalization
+@using Humanizer
+@using Markdig
 @model Lyzde.Pages.ArticlePage
 <!doctype html>
 <html>
@@ -9,29 +10,16 @@
     <meta name="description" content="Yuanzhi LIANG / Tonny's personal website.">
     <meta name="author" content="Yuanzhi LIANG">
     <title>Lyzde - Blog - @Model.Current.Title</title>
-    <link href="https://unpkg.com/bootstrap@4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/pnotify@3.2.1/dist/pnotify.css" rel="stylesheet">
-    <link href="https://unpkg.com/pnotify@3.2.1/dist/pnotify.brighttheme.css" rel="stylesheet">
-    <style>
-        body { padding-top: 3.5rem; }
-        #blog-list { opacity: 0; transition: opacity 0.2s ease-in-out; }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/article.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark justify-content-between">
-    <a class="navbar-brand" href="/index.html">LYZDE</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div id="main-navbar" class="collapse navbar-collapse">
+    <a class="navbar-brand" href="/Index">LYZDE</a>
+    <div id="main-navbar">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" href="/blog.html">Blog</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/login.html">Admin Panel</a>
+                <a class="nav-link" href="/Blog">Blog</a>
             </li>
         </ul>
     </div>
@@ -46,7 +34,10 @@
                     var tags = Model.Current.Tag.Split('|');
                     foreach (var tag in tags)
                     {
-                        if (tag == "") {continue;}
+                        if (tag == "")
+                        {
+                            continue;
+                        }
                         <span class="badge badge-pill badge-dark">@tag</span>
                     }
                 }
@@ -56,76 +47,26 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                <div id="blog-content-md" style="display: none">
-                    @Html.Raw(Model.Current.Content)
-                </div>
                 <div id="blog-content" class="p-2">
-                    {content}
+                    @Html.Raw(Markdown.ToHtml(Model.Current.Content))
                 </div>
-                <hr>
-                <h4>Comments</h4>
-                @{
-                    if (Model.Current.Comments.Count == 0)
-                    {
-                        <p id="blog-comment-empty" class="text-muted text-center p-3">There is no comment now.</p>
-                    }
-                    else
-                    {
-                        <div id="blog-comment-container" class="list-group">
-                            @foreach (var comment in Model.Current.Comments)
-                            {
-                                <div class="list-group-item list-group-item-action flex-column align-items-start">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">@comment.Subject</h5>
-                                        <small><abbr class="human-time" title="@comment.Datetime.ToString(CultureInfo.CurrentCulture)"></abbr></small>
-                                    </div>
-                                    <p class="mb-1">@comment.Content</p>
-                                    <small>@comment.Author</small>
-                                </div>
-                            }
-                        </div>
-                    }
-                }
-                
-                <hr>
-                <h4>Make a comment</h4>
-                <form id="comment-form">
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="comment-form-email">Email</label>
-                            <input name="email" type="email" class="form-control" id="comment-form-email" maxlength="50" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="comment-form-name">Name</label>
-                            <input name="name" type="text" class="form-control" id="comment-form-name" maxlength="50" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment-form-subject">Subject</label>
-                        <input name="subject" type="text" class="form-control" id="comment-form-subject" maxlength="50" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment-form-content">Content (plain text only)</label>
-                        <textarea name="content" class="form-control" id="comment-form-content" style="resize: vertical; min-height: 200px" maxlength="255" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-info btn-block">Submit</button>
-                    <p class="text-muted">Your email won't be shown.</p>
-                </form>
             </div>
             <div class="col-md-4">
-                
+
                 <a href="/blog.html" class="btn btn-info btn-block">Article List</a>
                 <dl class="row mt-3">
                     <dt class="col-sm-3">Datetime</dt>
-                    <dd id="blog-datetime" class="col-sm-9"><abbr class="human-time" title="@Model.Current.Datetime.ToString(CultureInfo.CurrentCulture)"></abbr></dd>
-                    <dt class="col-sm-3">View</dt>
-                    <dd id="blog-view" class="col-sm-9">@Model.Current.ViewCount</dd>
-                    <dt class="col-sm-3">Comment</dt>
-                    <dd id="blog-comment" class="col-sm-9">@Model.Current.Comments.Count</dd>
+                    <dd id="blog-datetime" class="col-sm-9">
+                        <abbr class="human-time" title="@Model.Current.Datetime.ToString("f")">@Model.Current.Datetime.Humanize()</abbr>
+                    </dd>
                 </dl>
                 <button type="button" class="btn btn-secondary btn-block" disabled="disabled">Other articles</button>
-                <ul id="blog-list" class="list-group list-group-flush"></ul>
-
+                <ul id="blog-list" class="list-group list-group-flush">
+                    @foreach (var a in Model.OtherArticles)
+                    {
+                        <a class="list-group-item list-group-item-action" href="/Article?id=@a.Id">@a.Title</a>
+                    }
+                </ul>
             </div>
         </div>
     </div>
@@ -137,12 +78,5 @@
         <small class="d-block mb-3 text-muted">&copy; 2018 Lyzde.</small>
     </footer>
 </div>
-<script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
-<script src="https://unpkg.com/showdown@1.8.6/dist/showdown.min.js"></script>
-<script src="https://unpkg.com/moment@2.20.1/min/moment.min.js"></script>
-<script src="https://unpkg.com/pnotify@3.2.1/dist/pnotify.js"></script>
-<script>var blogId = @Model.Current.Id</script>
-<script src="/js/post.js"></script>
-<script src="/Ajax/Analysis"></script>
 </body>
 </html>

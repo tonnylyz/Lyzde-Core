@@ -1,12 +1,12 @@
-﻿using Lyzde.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Lyzde.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace Lyzde.Controllers
 {
@@ -18,7 +18,7 @@ namespace Lyzde.Controllers
         {
             _db = db;
         }
-        
+
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
@@ -36,6 +36,7 @@ namespace Lyzde.Controllers
                 _db.SaveChanges();
                 return Ok();
             }
+
             v = Utility.Log(Request, "Login Failed : " + username + " : " + password);
             _db.Visits.Add(v);
             _db.SaveChanges();
@@ -100,7 +101,8 @@ namespace Lyzde.Controllers
         }
 
         [HttpPost]
-        public IActionResult ArticleSubmit(int id, string content, string datetime, string description, string tag, string title, int viewCount)
+        public IActionResult ArticleSubmit(int id, string content, string datetime, string description, string tag,
+            string title, int viewCount)
         {
             if (HttpContext.Session.Get("UUID") == null)
                 return NoContent();
@@ -131,6 +133,7 @@ namespace Lyzde.Controllers
                 article.Description = description;
                 article.Content = content;
             }
+
             try
             {
                 _db.SaveChanges();
@@ -139,6 +142,7 @@ namespace Lyzde.Controllers
             {
                 return BadRequest(ex.Message);
             }
+
             return Ok();
         }
 
@@ -168,7 +172,8 @@ namespace Lyzde.Controllers
             if (HttpContext.Session.Get("UUID") == null)
                 return NoContent();
             var comments = _db.Comments.Include(b => b.Article).Select(
-                c => new {
+                c => new
+                {
                     c.Id,
                     c.ArticleId,
                     c.Article.Title,
@@ -205,7 +210,7 @@ namespace Lyzde.Controllers
             _db.SaveChanges();
             return Ok();
         }
-        
+
         [HttpPost]
         public IActionResult UploadAsset(List<IFormFile> files)
         {
@@ -244,6 +249,5 @@ namespace Lyzde.Controllers
             file.Delete();
             return Ok();
         }
-        
     }
 }
