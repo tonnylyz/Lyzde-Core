@@ -1,35 +1,18 @@
-@page
+@page "~/blog.html"
 @using Humanizer
 @model Lyzde.Pages.BlogPage
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Yuanzhi LIANG / Tonny's personal website.">
-    <meta name="author" content="Yuanzhi LIANG">
-    <title>Lyzde - Blog</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/blog.css" rel="stylesheet">
-</head>
-<body>
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark justify-content-between">
-    <a class="navbar-brand" href="/Index">LYZDE</a>
-    <div id="main-navbar">
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="/Blog">Blog</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+@{
+    Layout = "_layout.cshtml";
+    ViewBag.Title = "Lyzde - Blog";
+    ViewBag.Css = "/css/blog.css";
+}
 
 <div class="container">
 
     <div id="blog-list-container" class="mt-4">
         @foreach (var article in Model.Articles)
         {
-            <a href="/Article?id=@article.Id" data-id="@article.Id" class="card post-item mt-4">
+            <a href="/post/@(article.Id + ".html")" data-id="@article.Id" class="card post-item mt-4">
                 <div class="card-body">
                     <h5 class="card-title">@article.Title</h5>
                     <h6 class="card-subtitle mb-2 text-muted">
@@ -57,13 +40,3 @@
         }
     </div>
 </div>
-
-<div class="container">
-    <hr>
-    <footer class="pt-2">
-        <img class="mb-2" src="/favicon.ico" alt="" width="24" height="24">
-        <small class="d-block mb-3 text-muted">&copy; 2018 Lyzde.</small>
-    </footer>
-</div>
-</body>
-</html>

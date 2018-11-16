@@ -26,7 +26,7 @@ namespace Lyzde.Pages
                 Description = a.Description,
                 Datetime = a.Datetime,
                 Tag = a.Tag
-            }).ToList();
+            }).OrderByDescending(a => a.Id).ToList();
         }
 
         public struct BlogListItem
