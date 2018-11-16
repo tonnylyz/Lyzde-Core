@@ -23,7 +23,7 @@ namespace Lyzde
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to parse config file.");
+                Console.WriteLine("Failed to parse config file: " + ex.Message);
                 Environment.Exit(-1);
             }
         }
