@@ -1,5 +1,4 @@
 ﻿@page "~/post/{id}.html"
-@using Humanizer
 @using Markdig
 @model Lyzde.Pages.ArticlePage
 @{
@@ -41,7 +40,7 @@
                 <dl class="row mt-3">
                     <dt class="col-sm-3">Datetime</dt>
                     <dd id="blog-datetime" class="col-sm-9">
-                        <abbr class="human-time" title="@Model.Current.Datetime.ToString("f")">@Model.Current.Datetime.Humanize()</abbr>
+                        @Model.Current.Datetime.ToString("f")
                     </dd>
                 </dl>
                 <button type="button" class="btn btn-secondary btn-block" disabled="disabled">Other articles</button>

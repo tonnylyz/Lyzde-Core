@@ -1,5 +1,4 @@
 @page "~/blog.html"
-@using Humanizer
 @model Lyzde.Pages.BlogPage
 @{
     Layout = "_layout.cshtml";
@@ -16,9 +15,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@article.Title</h5>
                     <h6 class="card-subtitle mb-2 text-muted">
-                        @{
-                            <abbr title="@article.Datetime.ToString("f")">@article.Datetime.Humanize()</abbr>
-                        }
+                        @article.Datetime.ToString("f")
                     </h6>
                     <p class="card-text">@article.Description</p>
                 </div>
